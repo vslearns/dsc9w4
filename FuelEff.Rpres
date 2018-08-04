@@ -1,0 +1,85 @@
+Predicting Fuel Efficiency
+========================================================
+author: Vanshaj S. • Aug. 4, 2018
+width: 1366
+height: 768
+
+Introduction
+========================================================
+
+The Coursera Johns Hopkins Data Science Specialization contains
+nine courses and a capstone project. The seventh course, Regression
+Models, contains a project that asks the student to explore the
+effect of different variables on the fuel efficiency of the cars in
+the  `mtcars` dataset.
+
+The Predicting Fuel Efficiency app, built with Shiny, allows the user
+to explore the  `mtcars` dataset by creating linear models of  `mpg`
+on the variables selected by the user.
+
+You can check out the app [here](https://vslearns.shinyapps.io/fuelefficiency/) and the source code [here](https://github.com/vslearns/dsc9w4).
+
+What it Does
+========================================================
+
+The app splits the  `mtcars` dataset into  `c.train` and  `c.test`.
+Once given the variables to use, the app generates (on the same seed)
+a linear model relating said variables to the fuel efficiency. The app
+then presents a plot of the actual  `c.train` mpg values and the model's
+predicted  `c.train` mpg values. You can also check out some highlight
+statistics on the model, including the model itself, the r-squared, an
+analysis of variance, and a Student's T confidence interval on the
+estimates.
+
+Lastly, once you've finished playing around and settled on a model, you
+can click on the Test tab to apply said model to the  `c.test` dataset.
+
+Just don't overfit!
+
+Example
+========================================================
+
+Suppose the only selected variable is transmission type. Here's the model
+that would then be generated.
+
+```{r, echo=F}
+library(caret)
+library(ggplot2)
+
+set.seed(41527)
+  
+data(mtcars)
+dp <- createDataPartition(y = mtcars$mpg, p = 0.7, list = F)
+  
+c.train <- mtcars[dp,]
+c.test <- mtcars[-dp,]
+
+set.seed(41527)
+```
+
+```{r}
+model <- train(mpg ~ am, data = c.train, method = "lm")
+model$finalModel
+```
+
+Example Continued
+========================================================
+
+Here's the generated plot:
+
+```{r, echo=F, fig.width=25, fig.height=15}
+ggp <- ggplot(c.train, aes(x = row.names(c.train), y = mpg)) +
+  geom_point(aes(col = "Actual", size=20)) + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  theme(axis.text=element_text(size=22), 
+        axis.title=element_text(size=24,face="bold"),
+        legend.text = element_text(size=24)) +
+  xlab("Vehicle") + ylab("Fuel Efficiency (MPG)") +
+  theme(legend.title=element_blank())
+
+  tr.pred <- predict(model, c.train)
+    
+  ggp <- ggp +
+    geom_point(aes(x = row.names(c.train), y = tr.pred, col = "Model", size = 20))
+  print(ggp)
+```

@@ -1,0 +1,10 @@
+name: fuelefficiency
+title:
+username:
+account: vslearns
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 395071
+bundleId: 1518438
+url: https://vslearns.shinyapps.io/fuelefficiency/
+when: 1533410462.91004
